@@ -474,6 +474,7 @@ public class EstudianteServiceImpl implements EstudianteService {
 	private InformacionPersonalDto estudianteToInformacionPersonal(Estudiante estudiante){
 		Persona persona = estudiante.getPersona();
 		return new InformacionPersonalDto(
+			estudiante.getId().intValue(),
 			persona.getNombre(), persona.getApellido(),
 			persona.getCorreoElectronico(),persona.getTelefono(),
 			estudiante.getCodigo(),persona.getTipoIdentificacion().obtenerAbreviatura(),

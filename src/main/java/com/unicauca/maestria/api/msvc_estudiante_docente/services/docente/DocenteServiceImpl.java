@@ -2,7 +2,6 @@ package com.unicauca.maestria.api.msvc_estudiante_docente.services.docente;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -374,7 +373,7 @@ public class DocenteServiceImpl implements DocenteService{
         .map(docente -> {
 			InformacionPersonalDto iPersonalDto = new InformacionPersonalDto();
 			Persona persona = docente.getPersona();
-
+			iPersonalDto.setId(docente.getId().intValue());
 			iPersonalDto.setNombres(persona.getNombre());
 			iPersonalDto.setApellidos(persona.getApellido());
 			iPersonalDto.setCorreo(persona.getCorreoElectronico());
