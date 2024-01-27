@@ -481,4 +481,10 @@ public class EstudianteServiceImpl implements EstudianteService {
 			persona.getIdentificacion().toString());
 	}
 
+	@Override
+	public InformacionPersonalDto obtenerEstudiantePorId(Integer id) {
+		Estudiante estudiante = estudianteRepository.findById(id.longValue()).get();
+		return estudianteToInformacionPersonal(estudiante);
+	}
+
 }

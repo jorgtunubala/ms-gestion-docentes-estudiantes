@@ -27,4 +27,5 @@ public interface EstudianteService {
 	void eliminarLogico(Long idEstudiante);
 	EstadoCargaMasivaDto cargarEstudiantes(MultipartFile file);
 	InformacionPersonalDto obtenerEstudiantePorCorreo(String correo);
+	InformacionPersonalDto obtenerEstudiantePorId(Integer id);
 }

@@ -94,4 +94,9 @@ public class EstudianteController {
 	public ResponseEntity<InformacionPersonalDto> obtenerInformacionEstudiante(@PathVariable String correo){
 		return ResponseEntity.ok(estudianteService.obtenerEstudiantePorCorreo(correo));
 	}
+
+	@GetMapping("/informacion-personal-estudiante/{idEstudiante}")
+	public ResponseEntity<InformacionPersonalDto> obtenerEstudiantePorId(@PathVariable Integer idEstudiante){
+		return ResponseEntity.ok(estudianteService.obtenerEstudiantePorId(idEstudiante));
+	}
 }

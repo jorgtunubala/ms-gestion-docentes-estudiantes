@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.EstadoCargaMasivaDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.InformacionPersonalDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente.DocenteResponseDto;
@@ -24,5 +23,6 @@ public interface DocenteService {
 	void eliminarFisico(Long id);
 	void eliminarLogico(Long id);
 	List<InformacionPersonalDto> listarDocentesActivos(String estado);
+	InformacionPersonalDto obtenerDocente(Integer id);
 	
 }

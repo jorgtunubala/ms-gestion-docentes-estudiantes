@@ -86,4 +86,9 @@ public class DocenteController {
 	public ResponseEntity<List<InformacionPersonalDto>> listarDocentesActivos(@PathVariable String estado){
 		return ResponseEntity.ok(docenteService.listarDocentesActivos(estado));
 	}
+
+	@GetMapping("/obtener-docente/{idDocente}")
+	public ResponseEntity<InformacionPersonalDto> obtenerDocente(@PathVariable Integer idDocente){
+		return ResponseEntity.ok(docenteService.obtenerDocente(idDocente));
+	}
 }
