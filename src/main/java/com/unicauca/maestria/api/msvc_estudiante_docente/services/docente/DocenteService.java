@@ -23,6 +23,6 @@ public interface DocenteService {
 	void eliminarFisico(Long id);
 	void eliminarLogico(Long id);
 	List<InformacionPersonalDto> listarDocentesActivos(String estado);
-	InformacionPersonalDto obtenerDocente(Integer id);
+	InformacionPersonalDto obtenerDocente(String identificador);
 	
 }

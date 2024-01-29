@@ -391,9 +391,14 @@ public class DocenteServiceImpl implements DocenteService{
     }
 
 	@Override
-	public InformacionPersonalDto obtenerDocente(Integer id) {
+	public InformacionPersonalDto obtenerDocente(String identificador) {
 		List<Docente> docentesActivos = new ArrayList<>();
-		docentesActivos.add(docenteRepository.findById(id.longValue()).get());
+		try {
+			Integer id = Integer.parseInt(identificador);
+			docentesActivos.add(docenteRepository.findById(id.longValue()).get());	
+		} catch (NumberFormatException e) {
+			docentesActivos.add(docenteRepository.findByCorreo(identificador));
+		}
 		return docentesToInformacionPersonal(docentesActivos).get(0);
 	}
  

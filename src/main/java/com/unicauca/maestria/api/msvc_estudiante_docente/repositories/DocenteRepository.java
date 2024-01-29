@@ -20,4 +20,11 @@ public interface DocenteRepository extends JpaRepository<Docente, Long>{
 	@Query("SELECT d FROM Docente d join d.persona p WHERE "
 			+ "d.estado = ?1")
 	public List<Docente> findAllActiveDocentes(EstadoPersona estado);
+
+	@Query("""
+			SELECT d FROM Docente d 
+			JOIN d.persona p 
+			WHERE p.correoElectronico = ?1
+			""")
+	public Docente findByCorreo(String correo);
 }
