@@ -1,8 +1,14 @@
 package com.unicauca.maestria.api.msvc_estudiante_docente.services.experto;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -32,6 +38,7 @@ import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoSav
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.EstadoCargaMasivaDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.InformacionPersonalDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.PersonaDto;
+import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente.CamposUnicosDocenteDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.exceptions.FieldErrorException;
 import com.unicauca.maestria.api.msvc_estudiante_docente.exceptions.FieldUniqueException;
 import com.unicauca.maestria.api.msvc_estudiante_docente.exceptions.ResourceNotFoundException;
@@ -56,18 +63,20 @@ public class ExpertoServiceImpl implements ExpertoService {
     @Override
     @Transactional
     public ExpertoResponseDto Crear(ExpertoSaveDto experto, BindingResult result) {
-        if(result.hasErrors()){
+        System.err.println(experto.toString());
+        if (result.hasErrors()) {
             throw new FieldErrorException(result);
         }
 
-        Map<String, String> validacionCamposUnicos = validacionCampoUnicos(obtenerCamposUnicos(experto),null);
-        if(!validacionCamposUnicos.isEmpty()){
+        Map<String, String> validacionCamposUnicos = validacionCampoUnicos(obtenerCamposUnicos(experto), null);
+        if (!validacionCamposUnicos.isEmpty()) {
             throw new FieldUniqueException(validacionCamposUnicos);
         }
-    
+
         Experto expertoBD = expertoRepository.save(expertoSaveMapper.toEntity(experto));
-    
-        // expertoBD.setPersona(personaRepository.findById(experto.getIdPersona()).orElseThrow(() -> new NotFoundException("Persona no encontrada")));
+
+        // expertoBD.setPersona(personaRepository.findById(experto.getIdPersona()).orElseThrow(()
+        // -> new NotFoundException("Persona no encontrada")));
         // return expertoResponseMapper.toDto(expertoRepository.save(entity));
         return crearExpertoResposeDto(expertoBD);
     }
@@ -120,7 +129,7 @@ public class ExpertoServiceImpl implements ExpertoService {
     @Override
     @Transactional
     public EstadoCargaMasivaDto CargarExpertos(MultipartFile file) {
-        
+
         EstadoCargaMasivaDto estadoCargaMasivaDto = null;
 
         try (Workbook workBook = new XSSFWorkbook(file.getInputStream())) {
@@ -144,7 +153,8 @@ public class ExpertoServiceImpl implements ExpertoService {
                             && !expertosEstructuraIncorrecta.contains(experto.getPersona()))
                     .toList();
 
-            List<Experto> expertosGuardados = expertoRepository.saveAll(expertoSaveMapper.toEntityList(expertosAcargar));
+            List<Experto> expertosGuardados = expertoRepository
+                    .saveAll(expertoSaveMapper.toEntityList(expertosAcargar));
 
             estadoCargaMasivaDto = EstadoCargaMasivaDto.builder()
                     .registrados(expertosGuardados.size())
@@ -238,7 +248,7 @@ public class ExpertoServiceImpl implements ExpertoService {
     }
 
     private ExpertoResponseDto crearExpertoResposeDto(Experto experto) {
-        
+
         ExpertoResponseDto expertoResponseDto = expertoResponseMapper.toDto(experto);
         return expertoResponseDto;
         // return ExpertoResponseDto.builder()
@@ -256,16 +266,40 @@ public class ExpertoServiceImpl implements ExpertoService {
         // .build();
     }
 
-    private Map<String, String> validacionCampoUnicos(CamposUnicosExpertoDto camposUnicosExpertoDto,
+    private Map<String, String> validacionCampoUnicos(CamposUnicosExpertoDto camposUnicos,
             CamposUnicosExpertoDto camposUnicosBD) {
-        return Map.of(
-                "identificacion",
-                camposUnicosExpertoDto.getIdentificacion().equals(camposUnicosBD.getIdentificacion()) ? null
-                        : "Identificacion ya existe",
-                "correoElectronico",
-                camposUnicosExpertoDto.getCorreoElectronico().equals(camposUnicosBD.getCorreoElectronico()) ? null
-                        : "Correo Electronico ya existe");
+
+        Map<String, Function<CamposUnicosExpertoDto, Boolean>> mapCamposUnicos = new HashMap<>();
+
+        mapCamposUnicos.put("identificacion",
+                dto -> (camposUnicosBD == null || !dto.getIdentificacion().equals(camposUnicosBD.getIdentificacion()))
+                        && personaRepository.existsByIdentificacion(dto.getIdentificacion()));
+        mapCamposUnicos.put("correoElectronico",
+                dto -> (camposUnicosBD == null
+                        || !dto.getCorreoElectronico().equals(camposUnicosBD.getCorreoElectronico()))
+                        && personaRepository.existsByCorreoElectronico(dto.getCorreoElectronico()));
+
+        Predicate<Field> existeCampoUnico = campo -> mapCamposUnicos.containsKey(campo.getName());
+        Predicate<Field> existeCampoBD = campoBD -> mapCamposUnicos.get(campoBD.getName()).apply(camposUnicos);
+        Predicate<Field> campoInvalido = existeCampoUnico.and(existeCampoBD);
+
+        return Arrays.stream(camposUnicos.getClass().getDeclaredFields())
+                .filter(campoInvalido)
+                .peek(field -> field.setAccessible(true))
+                .collect(Collectors.toMap(Field::getName, field -> {
+                    Object valorCampo = null;
+                    try {
+                        valorCampo = field.get(camposUnicos);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    return mensajeException(field.getName(), valorCampo);
+                }));
+
     }
+    private <T> String mensajeException(String nombreCampo,T valorCampo) {
+	    return "Campo único, ya existe un docente con la información: " + nombreCampo + ": " + valorCampo;
+	}
 
     private void actualizarinformacionExperto(Experto experto, Experto expertoBD) {
         expertoBD.setPersona(experto.getPersona());
@@ -280,9 +314,8 @@ public class ExpertoServiceImpl implements ExpertoService {
     }
 
     @Override
-    public List<ExpertoResponseDto> ListarExpertosActivos(String estado) 
-    {
-        
+    public List<ExpertoResponseDto> ListarExpertosActivos(String estado) {
+
         return expertoRepository.findAllActiveExperto(EstadoPersona.valueOf(estado))
                 .stream()
                 .map(
@@ -335,7 +368,5 @@ public class ExpertoServiceImpl implements ExpertoService {
                 .build();
 
     }
-
-   
 
 }
