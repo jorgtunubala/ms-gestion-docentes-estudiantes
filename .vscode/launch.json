@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MsvcEstudianteDocenteApplication<msvc-estudiante-docente>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.unicauca.maestria.api.msvc_estudiante_docente.MsvcEstudianteDocenteApplication",
+            "projectName": "msvc-estudiante-docente",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

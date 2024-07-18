@@ -13,6 +13,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
+  main:
+    allow-circular-references: true
 
 logging:
   level:
