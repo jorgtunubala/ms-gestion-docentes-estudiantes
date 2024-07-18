@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name="experto_linea_investigacion",uniqueConstraints = {
+@Table(name="expertos_linea_investigacion",uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"id_experto","id_linea_investigacion"})
 })
 public class ExpertoLineaInvestigacion {
