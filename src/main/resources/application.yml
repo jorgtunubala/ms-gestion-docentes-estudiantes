@@ -1,6 +1,6 @@
 spring:
   application:
-    name: msv-estudiante-docente
+    name: ms-estudiante-docente-experto
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
