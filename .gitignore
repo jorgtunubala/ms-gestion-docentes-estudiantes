@@ -1,0 +1,27 @@
+# Ignorar archivos de configuración de entorno
+.env
+
+# Ignorar configuración de Visual Studio Code
+.vscode/
+
+# Ignorar archivos generados por el sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar directorios de compilación
+target/
+build/
+
+# Ignorar archivos de dependencia
+node_modules/
+vendor/
+
+# Ignorar archivos de log
+*.log
+
+# Ignorar archivos temporales
+*.tmp
+*.swp
+
+# Ignorar archivos de cobertura de pruebas
+coverage/
