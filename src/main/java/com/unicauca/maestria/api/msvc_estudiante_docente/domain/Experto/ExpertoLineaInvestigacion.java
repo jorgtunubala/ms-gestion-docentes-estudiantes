@@ -16,22 +16,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table(name="experto_linea_investigacion",uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"id_experto","id_linea_investigacion"})
+@Table(name = "expertos_linea_investigacion", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "id_experto", "id_linea_investigacion" })
 })
 public class ExpertoLineaInvestigacion {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "id_experto")
 	private Experto experto;
-	
+
 	@ManyToOne
-	@JoinColumn(name= "id_linea_investigacion")
+	@JoinColumn(name = "id_linea_investigacion")
 	private LineaInvestigacion lineaInvestigacion;
 }
